@@ -19,11 +19,21 @@ public class TodoTaskController {
 
     @PostMapping("register")
     public ResponseEntity<ResApiDto<Object, Object>> registerTodoTask(@RequestParam Long userId, @Valid @RequestBody ReqTodoTaskDto dto) {
-        return ResponseEntity.ok(ResApiDto.success(todoTaskService.createTodoTask(userId,dto)));
+        return ResponseEntity.ok(ResApiDto.created(todoTaskService.createTodoTask(userId,dto)));
     }
 
     @PostMapping("get-all")
     public ResponseEntity<ResApiDto<Object, Object>> getAllTodoTask() {
-        return ResponseEntity.ok(ResApiDto.success(todoTaskService.getAll()));
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getAll()));
+    }
+
+    @PostMapping("get-byId")
+    public ResponseEntity<ResApiDto<Object, Object>> getById(@RequestParam Long taskId) {
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getById(taskId)));
+    }
+
+    @PostMapping("update")
+    public ResponseEntity<ResApiDto<Object, Object>> update(@RequestParam Long taskId, @Valid @RequestBody ReqTodoTaskDto dto) {
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.update(taskId, dto)));
     }
 }

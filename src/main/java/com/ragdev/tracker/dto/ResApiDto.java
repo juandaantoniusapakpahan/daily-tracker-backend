@@ -22,7 +22,10 @@ public class ResApiDto<T, E> {
     private T data;
     private E errors;
 
-    public static <T, E> ResApiDto<T, E> success(T data) {
+    public static <T, E> ResApiDto<T, E> created(T data) {
         return new ResApiDto<>("success", ApiCode.SUCCESS_CREATED.getCode(), ApiCode.SUCCESS_CREATED.getMessage(), LocalDateTime.now(), data, null);
+    }
+    public static <T, E> ResApiDto<T, E> ok(T data) {
+        return new ResApiDto<>("success", ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getMessage(), LocalDateTime.now(), data, null);
     }
 }

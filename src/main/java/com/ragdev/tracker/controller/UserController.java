@@ -24,6 +24,6 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<ResApiDto<Object,Object>> registerUser(@Valid @RequestBody ReqRegisterUserDto dto) {
         ResUserDto resDto = userService.registerUser(dto);
-        return ResponseEntity.ok(ResApiDto.success(resDto));
+        return ResponseEntity.ok(ResApiDto.created(resDto));
     }
 }

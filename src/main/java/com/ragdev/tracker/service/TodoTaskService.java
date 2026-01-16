@@ -44,4 +44,22 @@ public class TodoTaskService {
                 .map(TodoTaskMapper::toTodoResDto)
                 .collect(Collectors.toList());
     }
+
+    public ResTodoTaskDto getById(long taskId) {
+        return TodoTaskMapper.toTodoResDto(
+                todoTaskRepository.findById(taskId).orElseThrow(()->new ResourceNotFoundException("Task not found")));
+    }
+
+    public ResTodoTaskDto update(Long taskId, ReqTodoTaskDto dto) {
+        TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+        String newTaskName = dto.getName().trim();
+        String newDescription = dto.getDescription().trim();
+
+        if (!newTaskName.isEmpty()) {
+            todoTask.setName(newTaskName);
+        }
+        todoTask.setDescription(newDescription);
+        todoTaskRepository.save(todoTask);
+        return TodoTaskMapper.toTodoResDto(todoTask);
+    }
 }
