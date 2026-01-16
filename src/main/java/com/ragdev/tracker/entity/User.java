@@ -57,4 +57,5 @@ public class User {
     @JsonManagedReference
     private List<FinanceTransaction> financeTransactions;
 
+    private Boolean isActive;
 }

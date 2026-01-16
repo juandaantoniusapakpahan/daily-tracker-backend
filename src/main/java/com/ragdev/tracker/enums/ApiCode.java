@@ -10,6 +10,7 @@ public enum ApiCode {
     UNAUTHORIZED("401", "Unauthorized"),
     FORBIDDEN("403", "Forbidden"),
     NOT_FOUND("404", "Resource not found"),
+    SUCCESS_CREATED("201", "Resource created successfully"),
 
     // Server Errors
     INTERNAL_ERROR("500", "Internal server error"),

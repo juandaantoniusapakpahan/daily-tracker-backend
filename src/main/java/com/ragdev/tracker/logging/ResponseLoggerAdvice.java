@@ -1,6 +1,6 @@
 package com.ragdev.tracker.logging;
 
-import com.ragdev.tracker.dto.ApiResponse;
+import com.ragdev.tracker.dto.ResApiDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @Slf4j
-@ControllerAdvice
 public class ResponseLoggerAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -25,17 +24,17 @@ public class ResponseLoggerAdvice implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        if (body instanceof ApiResponse<?,?> apiResponse) {
-            if ("success".equalsIgnoreCase(apiResponse.getStatus())) {
+        if (body instanceof ResApiDto<?,?> resApiDto) {
+            if ("success".equalsIgnoreCase(resApiDto.getStatus())) {
                 log.info("SUCCESS API {} {} -> {}",
                         request.getMethod(),
                         request.getURI(),
-                        apiResponse.getData());
-            } else if ("error".equalsIgnoreCase(apiResponse.getStatus())) {
+                        resApiDto.getData()); // still need to fix this
+            } else if ("error".equalsIgnoreCase(resApiDto.getStatus())) {
                 log.error("ERROR API {} {} -> {}",
                         request.getMethod(),
                         request.getURI(),
-                        apiResponse.getErrors());
+                        resApiDto.getErrors()); // still need to fix this
             }
         } else {
             log.info("API {} {} -> {}", request.getMethod(), request.getURI(), body);
