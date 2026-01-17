@@ -39,8 +39,8 @@ public class TodoTaskService {
         return TodoTaskMapper.toTodoResDto(newTodoTask);
     }
 
-    public List<ResTodoTaskDto> getAll() {
-        return todoTaskRepository.findAll().stream()
+    public List<ResTodoTaskDto> getAll(Boolean status) {
+        return todoTaskRepository.findByIsActive(status).stream()
                 .map(TodoTaskMapper::toTodoResDto)
                 .collect(Collectors.toList());
     }
@@ -61,5 +61,17 @@ public class TodoTaskService {
         todoTask.setDescription(newDescription);
         todoTaskRepository.save(todoTask);
         return TodoTaskMapper.toTodoResDto(todoTask);
+    }
+
+    public void delete(Long taskId) {
+        TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+        todoTask.setIsActive(false);
+        todoTaskRepository.save(todoTask);
+    }
+
+    public void activate(Long taskId) {
+        TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+        todoTask.setIsActive(true);
+        todoTaskRepository.save(todoTask);
     }
 }

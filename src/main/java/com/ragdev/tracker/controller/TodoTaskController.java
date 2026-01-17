@@ -23,8 +23,8 @@ public class TodoTaskController {
     }
 
     @PostMapping("get-all")
-    public ResponseEntity<ResApiDto<Object, Object>> getAllTodoTask() {
-        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getAll()));
+    public ResponseEntity<ResApiDto<Object, Object>> getAllTodoTask(@RequestParam(defaultValue = "true") Boolean status) {
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getAll(status)));
     }
 
     @PostMapping("get-byId")
@@ -35,5 +35,17 @@ public class TodoTaskController {
     @PostMapping("update")
     public ResponseEntity<ResApiDto<Object, Object>> update(@RequestParam Long taskId, @Valid @RequestBody ReqTodoTaskDto dto) {
         return ResponseEntity.ok(ResApiDto.ok(todoTaskService.update(taskId, dto)));
+    }
+
+    @PostMapping("soft-delete")
+    public ResponseEntity<ResApiDto<Object, Object>> delete(@RequestParam Long taskId) {
+        todoTaskService.delete(taskId);
+        return ResponseEntity.ok(ResApiDto.ok(null));
+    }
+
+    @PostMapping("activate")
+    public ResponseEntity<ResApiDto<Object, Object>> activate(@RequestParam Long taskId) {
+        todoTaskService.activate(taskId);
+        return ResponseEntity.ok(ResApiDto.ok(null));
     }
 }
