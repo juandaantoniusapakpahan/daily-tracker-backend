@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Setter
@@ -32,7 +33,7 @@ public class TodoCheckList {
     private User user;
 
     @Column(name = "check_date", nullable = false)
-    private LocalDateTime checkDate;
+    private LocalDate checkDate;
 
     @Column(name = "is_checked",  nullable = false)
     private Boolean isChecked = false;

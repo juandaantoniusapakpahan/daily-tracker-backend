@@ -1,0 +1,77 @@
+package com.ragdev.tracker.service;
+
+import com.ragdev.tracker.dto.ReqTodoTaskDto;
+import com.ragdev.tracker.dto.ResTodoTaskDto;
+import com.ragdev.tracker.entity.TodoTask;
+import com.ragdev.tracker.entity.User;
+import com.ragdev.tracker.exception.ResourceNotFoundException;
+import com.ragdev.tracker.mapper.TodoTaskMapper;
+import com.ragdev.tracker.repository.TodoTaskRepository;
+import com.ragdev.tracker.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class TodoTaskService {
+
+    private final TodoTaskRepository todoTaskRepository;
+    private final UserRepository userRepository;
+
+    public TodoTaskService(TodoTaskRepository todoTaskRepository,
+                           UserRepository userRepository) {
+        this.todoTaskRepository = todoTaskRepository;
+        this.userRepository = userRepository;
+    }
+
+    public ResTodoTaskDto createTodoTask(Long userId, ReqTodoTaskDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        TodoTask newTodoTask = new TodoTask();
+        newTodoTask.setName(dto.getName());
+        newTodoTask.setDescription(dto.getDescription());
+        newTodoTask.setIsActive(true);
+        newTodoTask.setUser(user);
+        todoTaskRepository.save(newTodoTask);
+
+        return TodoTaskMapper.toTodoResDto(newTodoTask);
+    }
+
+    public List<ResTodoTaskDto> getAll(Boolean status) {
+        return todoTaskRepository.findByIsActive(status).stream()
+                .map(TodoTaskMapper::toTodoResDto)
+                .collect(Collectors.toList());
+    }
+
+    public ResTodoTaskDto getById(long taskId) {
+        return TodoTaskMapper.toTodoResDto(
+                todoTaskRepository.findById(taskId).orElseThrow(()->new ResourceNotFoundException("Task not found")));
+    }
+
+    public ResTodoTaskDto update(Long taskId, ReqTodoTaskDto dto) {
+        TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+        String newTaskName = dto.getName().trim();
+        String newDescription = dto.getDescription().trim();
+
+        if (!newTaskName.isEmpty()) {
+            todoTask.setName(newTaskName);
+        }
+        todoTask.setDescription(newDescription);
+        todoTaskRepository.save(todoTask);
+        return TodoTaskMapper.toTodoResDto(todoTask);
+    }
+
+    public void delete(Long taskId) {
+        TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+        todoTask.setIsActive(false);
+        todoTaskRepository.save(todoTask);
+    }
+
+    public void activate(Long taskId) {
+        TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
+        todoTask.setIsActive(true);
+        todoTaskRepository.save(todoTask);
+    }
+}
