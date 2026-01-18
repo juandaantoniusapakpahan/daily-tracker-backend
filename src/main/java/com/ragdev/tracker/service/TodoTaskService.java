@@ -74,4 +74,12 @@ public class TodoTaskService {
         todoTask.setIsActive(true);
         todoTaskRepository.save(todoTask);
     }
+
+    public List<TodoTask> getAll() {
+        return todoTaskRepository.findAll();
+    }
+
+    public List<TodoTask> getByUserId(Long userId) {
+        return todoTaskRepository.findByUserId(userId);
+    }
 }

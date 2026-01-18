@@ -10,6 +10,7 @@ import com.ragdev.tracker.mapper.TodoCheckListMapper;
 import com.ragdev.tracker.repository.TodoCheckListRepository;
 import com.ragdev.tracker.repository.TodoTaskRepository;
 import com.ragdev.tracker.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -76,5 +77,14 @@ public class CheckListService {
         return todoCheckListRepository.findByIsChecked(status).stream()
                 .map(TodoCheckListMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public void saveAll(List<TodoCheckList> checkLists) {
+        todoCheckListRepository.saveAll(checkLists);
+    }
+
+    public boolean existsByCheckDate(LocalDate today) {
+        return todoCheckListRepository.existsByCheckDate(today);
     }
 }
