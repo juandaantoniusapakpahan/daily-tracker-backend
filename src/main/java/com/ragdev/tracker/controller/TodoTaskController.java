@@ -48,4 +48,9 @@ public class TodoTaskController {
         todoTaskService.activate(taskId);
         return ResponseEntity.ok(ResApiDto.ok(null));
     }
+
+    @PostMapping("get-checklist-byMonth")
+    public ResponseEntity<ResApiDto<Object,Object>> getTodoTaskAndCheckList(@RequestParam Long userId) {
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getTodoTaskAndCheckListByMonth(userId)));
+    }
 }
