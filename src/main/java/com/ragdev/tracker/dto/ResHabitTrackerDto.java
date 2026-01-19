@@ -1,6 +1,7 @@
 package com.ragdev.tracker.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +15,6 @@ public class ResHabitTrackerDto {
     private String month;
     private String today;
     private List<String> dates;
-    private List<ResTodoTaskDto> todoTaskLists;
+
+    private List<ResTodoTaskDto> tasks;
 }

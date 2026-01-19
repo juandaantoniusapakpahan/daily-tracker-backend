@@ -87,4 +87,9 @@ public class CheckListService {
     public boolean existsByCheckDate(LocalDate today) {
         return todoCheckListRepository.existsByCheckDate(today);
     }
+
+    public boolean existByUserIdAndCheckDate(Long userId, LocalDate today){
+        return todoCheckListRepository.existsByUserIdAndCheckDate(userId, today);
+    }
+
 }
