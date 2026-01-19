@@ -10,6 +10,8 @@ import com.ragdev.tracker.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -34,5 +36,13 @@ public class UserService {
         newUser.setIsActive(true);
         userRepository.save(newUser);
         return UserMapper.setUserToDto(newUser);
+    }
+
+    public List<User> getActiveUser() {
+        return userRepository.findByIsActive(true);
+    }
+
+    public List<User> getActiveUserManual() {
+        return userRepository.findAllActiveWithTasks();
     }
 }

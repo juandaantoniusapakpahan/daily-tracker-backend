@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface TodoTaskRepository extends JpaRepository<TodoTask, Long> {
     List<TodoTask> findByIsActive (Boolean status);
     boolean findByIdAndIsActive(Long id, Boolean isActive);
+    List<TodoTask> findByUserId(Long id);
+
 }
