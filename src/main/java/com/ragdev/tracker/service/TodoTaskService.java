@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,7 +145,9 @@ public class TodoTaskService {
         return dates;
     }
 
-    public List<ResTaskAverageMonthDto> getMonthlyTaskPrt(Long userId, int month) {
-        return todoTaskRepository.getMonthlyTaskPrt(userId, month, YearMonth.of(today.getYear(), month).lengthOfMonth());
+    public Map<String,List<ResTaskAverageMonthDto>> getMonthlyTaskPrt(Long userId, int month) {
+        HashMap<String, List<ResTaskAverageMonthDto>> map = new HashMap<>();
+        map.put("tasks",todoTaskRepository.getMonthlyTaskPrt(userId, month, YearMonth.of(today.getYear(), month).lengthOfMonth()));
+        return map;
     }
 }
