@@ -23,7 +23,7 @@ public class TodoCheckListController {
         return ResponseEntity.ok(ResApiDto.ok( checkListService.check(checkId)));
     }
 
-    @PostMapping("unCheck")
+    @PostMapping("uncheck")
     public ResponseEntity<ResApiDto<Object, Object>> unCheck(@RequestParam Long checkId) {
         return ResponseEntity.ok(ResApiDto.ok( checkListService.unCheck(checkId)));
     }

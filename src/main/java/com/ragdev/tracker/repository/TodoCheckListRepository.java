@@ -25,4 +25,6 @@ public interface TodoCheckListRepository extends JpaRepository<TodoCheckList, Lo
     List<TodoCheckList> getByTaskIdAndMonth(@Param("taskId") Long taskId,
                                             @Param("month") Integer month,
                                             @Param("year") Integer year);
+
+    boolean existsByUserIdAndCheckDate(Long userId, LocalDate today);
 }

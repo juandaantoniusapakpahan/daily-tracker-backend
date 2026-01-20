@@ -20,30 +20,28 @@ import java.util.List;
 public class TodoCheckListSchedule {
     private final CheckListService checkListService;
     private final UserService userService;
-    private final TodoTaskService todoTaskService;
     private final static Logger logger = LoggerFactory.getLogger(TodoCheckListSchedule.class);
 
     public TodoCheckListSchedule(CheckListService checkListService,
-                                 UserService userService,
-                                 TodoTaskService todoTaskService) {
+                                 UserService userService
+                                ) {
         this.checkListService = checkListService;
         this.userService = userService;
-        this.todoTaskService = todoTaskService;
     }
 
-    @Scheduled(fixedDelay = 60_000)
+    @Scheduled(cron = "${todo.checklist.schedule.cron.cleanup-task}")
     public void createCheckListDay() {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Jakarta"));
 
-        if (checkListService.existsByCheckDate(today)) {
-            logger.info("Checklist already created for date {}", today);
-            return;
-        }
-
         List<User> allUser = userService.getActiveUserManual();
         for(User user : allUser) {
+            if (checkListService.existByUserIdAndCheckDate(user.getId(),today)) {
+                logger.info("Checklist already created for date {}", today);
+                continue;
+            }
             List<TodoTask> allTodoTask = user.getTodoTasks();
             List<TodoCheckList> checkLists = new ArrayList<>();
+
             for (TodoTask task: allTodoTask){
                 TodoCheckList c = new TodoCheckList();
                 c.setUser(user);

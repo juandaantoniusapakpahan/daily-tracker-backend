@@ -115,7 +115,7 @@ public class TodoTaskService {
             taskDto.setTodoCheckLists(checkListDto);
             todoTaskLists.add(taskDto);
         }
-        tracker.setTodoTaskLists(todoTaskLists);
+        tracker.setTasks(todoTaskLists);
         return tracker;
     }
 
