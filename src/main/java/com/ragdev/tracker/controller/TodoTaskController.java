@@ -50,7 +50,14 @@ public class TodoTaskController {
     }
 
     @PostMapping("get-checklist-byMonth")
-    public ResponseEntity<ResApiDto<Object,Object>> getTodoTaskAndCheckList(@RequestParam Long userId) {
-        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getTodoTaskAndCheckListByMonth(userId)));
+    public ResponseEntity<ResApiDto<Object,Object>> getTodoTaskAndCheckList(@RequestParam Long userId,
+                                                                            @RequestParam int month) {
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getTodoTaskAndCheckListByMonth(userId,month)));
+    }
+
+    @PostMapping("get-prt-byMonth")
+    public ResponseEntity<ResApiDto<Object, Object>> getMonthlyTaskPrt(@RequestParam Long userId,
+                                                                       @RequestParam int month) {
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getMonthlyTaskPrt(userId, month)));
     }
 }

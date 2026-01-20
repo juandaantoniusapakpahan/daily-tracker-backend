@@ -43,6 +43,8 @@ public class TodoCheckListSchedule {
             List<TodoCheckList> checkLists = new ArrayList<>();
 
             for (TodoTask task: allTodoTask){
+                if (!task.getIsActive()) continue;
+
                 TodoCheckList c = new TodoCheckList();
                 c.setUser(user);
                 c.setTask(task);

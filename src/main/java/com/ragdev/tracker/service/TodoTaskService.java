@@ -4,6 +4,7 @@ import com.ragdev.tracker.dto.ReqTodoTaskDto;
 import com.ragdev.tracker.dto.ResHabitTrackerDto;
 import com.ragdev.tracker.dto.ResTodoCheckListDto;
 import com.ragdev.tracker.dto.ResTodoTaskDto;
+import com.ragdev.tracker.dto.interf.ResTaskAverageMonthDto;
 import com.ragdev.tracker.entity.TodoCheckList;
 import com.ragdev.tracker.entity.TodoTask;
 import com.ragdev.tracker.entity.User;
@@ -13,6 +14,7 @@ import com.ragdev.tracker.mapper.TodoTaskMapper;
 import com.ragdev.tracker.repository.TodoCheckListRepository;
 import com.ragdev.tracker.repository.TodoTaskRepository;
 import com.ragdev.tracker.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -27,7 +29,7 @@ public class TodoTaskService {
     private final TodoTaskRepository todoTaskRepository;
     private final UserRepository userRepository;
     private final TodoCheckListRepository checkListRepository;
-    private static LocalDate today = LocalDate.now(ZoneId.of("Asia/Jakarta"));
+    private final static LocalDate today = LocalDate.now(ZoneId.of("Asia/Jakarta"));
 
 
     public TodoTaskService(TodoTaskRepository todoTaskRepository,
@@ -38,18 +40,26 @@ public class TodoTaskService {
         this.checkListRepository = checkListRepository;
     }
 
+    @Transactional
     public ResTodoTaskDto createTodoTask(Long userId, ReqTodoTaskDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        TodoTask newTodoTask = new TodoTask();
-        newTodoTask.setName(dto.getName());
-        newTodoTask.setDescription(dto.getDescription());
-        newTodoTask.setIsActive(true);
-        newTodoTask.setUser(user);
-        todoTaskRepository.save(newTodoTask);
+        TodoTask newTask = new TodoTask();
+        newTask.setName(dto.getName());
+        newTask.setDescription(dto.getDescription());
+        newTask.setIsActive(true);
+        newTask.setUser(user);
+        todoTaskRepository.save(newTask);
 
-        return TodoTaskMapper.toTodoResDto(newTodoTask);
+        TodoCheckList newCheckList = new TodoCheckList();
+        newCheckList.setUser(user);
+        newCheckList.setTask(newTask);
+        newCheckList.setCheckDate(today);
+        newCheckList.setIsChecked(false);
+        checkListRepository.save(newCheckList);
+
+        return TodoTaskMapper.toTodoResDto(newTask);
     }
 
     public List<ResTodoTaskDto> getAll(Boolean status) {
@@ -63,6 +73,7 @@ public class TodoTaskService {
                 todoTaskRepository.findById(taskId).orElseThrow(()->new ResourceNotFoundException("Task not found")));
     }
 
+    @Transactional
     public ResTodoTaskDto update(Long taskId, ReqTodoTaskDto dto) {
         TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         String newTaskName = dto.getName().trim();
@@ -76,12 +87,14 @@ public class TodoTaskService {
         return TodoTaskMapper.toTodoResDto(todoTask);
     }
 
+    @Transactional
     public void delete(Long taskId) {
         TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         todoTask.setIsActive(false);
         todoTaskRepository.save(todoTask);
     }
 
+    @Transactional
     public void activate(Long taskId) {
         TodoTask todoTask = todoTaskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         todoTask.setIsActive(true);
@@ -93,22 +106,22 @@ public class TodoTaskService {
     }
 
     public List<TodoTask> getByUserId(Long userId) {
-        return todoTaskRepository.findByUserId(userId);
+        return todoTaskRepository.findByUserIdAndIsActive(userId,true);
     }
 
-    public ResHabitTrackerDto getTodoTaskAndCheckListByMonth(Long userId) {
+    public ResHabitTrackerDto getTodoTaskAndCheckListByMonth(Long userId,int month) {
 
         ResHabitTrackerDto tracker = new ResHabitTrackerDto();
-        tracker.setDates(getDatesFromTodayToMonthStart());
+        tracker.setDates(getDatesFromTodayToMonthStart(month));
         tracker.setToday(today.toString());
         tracker.setMonth(today.getMonth().toString());
 
         List<ResTodoTaskDto> todoTaskLists = new ArrayList<>();
-        List<TodoTask> todoTasks = todoTaskRepository.findByUserId(userId);
+        List<TodoTask> todoTasks = todoTaskRepository.findByUserIdAndIsActive(userId, true);
 
         for (TodoTask todoTask: todoTasks) {
             List<ResTodoCheckListDto> checkListDto = checkListRepository
-                    .getByTaskIdAndMonth(todoTask.getId(),today.getMonthValue(), today.getYear())
+                    .getByTaskIdAndMonth(todoTask.getId(),month, today.getYear())
                     .stream().map(TodoCheckListMapper::toDto).toList();
 
             ResTodoTaskDto taskDto = TodoTaskMapper.toTodoResDto(todoTask);
@@ -119,16 +132,18 @@ public class TodoTaskService {
         return tracker;
     }
 
-    public static List<String> getDatesFromTodayToMonthStart() {
-        YearMonth currentMonth = YearMonth.from(today);
+    public static List<String> getDatesFromTodayToMonthStart(int month) {
+        YearMonth currentMonth = YearMonth.of(today.getYear(), month);
         List<String> dates = new ArrayList<>();
 
-        for (int day = today.getDayOfMonth(); day >= 1; day--) {
+        for (int day = currentMonth.lengthOfMonth(); day >= 1; day--) {
             LocalDate date = currentMonth.atDay(day);
             dates.add(date.toString());
         }
         return dates;
     }
 
-
+    public List<ResTaskAverageMonthDto> getMonthlyTaskPrt(Long userId, int month) {
+        return todoTaskRepository.getMonthlyTaskPrt(userId, month, YearMonth.of(today.getYear(), month).lengthOfMonth());
+    }
 }
