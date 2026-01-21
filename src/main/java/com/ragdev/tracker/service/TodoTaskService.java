@@ -111,10 +111,11 @@ public class TodoTaskService {
         return todoTaskRepository.findByUserIdAndIsActive(userId,true);
     }
 
-    public ResHabitTrackerDto getTodoTaskAndCheckListByMonth(Long userId,int month) {
+    public ResHabitTrackerDto getTodoTaskAndCheckListByMonth(Long userId,int month, boolean history) {
 
         ResHabitTrackerDto tracker = new ResHabitTrackerDto();
-        tracker.setDates(getDatesFromTodayToMonthStart(month));
+        tracker.setDates(getDatesFromTodayToMonthStart(month,history));
+
         tracker.setToday(today.toString());
         tracker.setMonth(today.getMonth().toString());
 
@@ -134,11 +135,13 @@ public class TodoTaskService {
         return tracker;
     }
 
-    public static List<String> getDatesFromTodayToMonthStart(int month) {
+    public static List<String> getDatesFromTodayToMonthStart(int month, boolean history) {
         YearMonth currentMonth = YearMonth.of(today.getYear(), month);
         List<String> dates = new ArrayList<>();
 
-        for (int day = currentMonth.lengthOfMonth(); day >= 1; day--) {
+        int days = history ? YearMonth.of(today.getYear(), month).lengthOfMonth()  : today.getDayOfMonth();
+
+        for (int day = days; day >= 1; day--) {
             LocalDate date = currentMonth.atDay(day);
             dates.add(date.toString());
         }

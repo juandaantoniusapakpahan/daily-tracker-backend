@@ -21,11 +21,10 @@ public interface TodoTaskRepository extends JpaRepository<TodoTask, Long> {
     @Query(value = """
             SELECT tt.id AS taskId,
             tt.name AS taskName,
-            ROUND((COUNT(tc.id) * 1.0 / :dayAmount) * 100.0,2) AS average
+            ROUND((COUNT(1) * 1.0 / :dayAmount) * 100.0,2) AS average
             FROM todo_tasks tt
             JOIN todo_checklists tc ON tc.task_id = tt.id
-            where tt.user_id = :userId AND EXTRACT(MONTH FROM tc.check_date) = :month
-            AND tt.is_active = true
+            where tt.is_active = true AND tc.is_checked = true AND tt.user_id = :userId  AND EXTRACT(MONTH FROM tc.check_date) = :month
             GROUP BY tt.id
             """, nativeQuery = true)
     List<ResTaskAverageMonthDto> getMonthlyTaskPrt(@Param("userId") Long userId,
