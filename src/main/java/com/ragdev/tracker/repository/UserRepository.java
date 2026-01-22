@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -13,6 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
     boolean existsByUsernameOrEmail(String username, String email);
     List<User> findByIsActive(boolean status);
+    Optional<User> findByUsername(String username);
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.todoTasks WHERE u.isActive = true")
     List<User> findAllActiveWithTasks();
 }
