@@ -40,6 +40,8 @@ public class FinanceTransaction {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    private String description;
+
     private String note;
     @Column(name = "transaction_date", nullable = false)
     private LocalDate transactionDate;
