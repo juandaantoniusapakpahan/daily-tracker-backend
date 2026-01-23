@@ -1,8 +1,10 @@
 package com.ragdev.tracker.controller;
 
 import com.ragdev.tracker.dto.ResApiDto;
+import com.ragdev.tracker.security.UserDetailsImpl;
 import com.ragdev.tracker.service.CheckListService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +31,8 @@ public class TodoCheckListController {
     }
 
     @PostMapping("insert-test")
-    public ResponseEntity<ResApiDto<Object, Object>> insertTest(@RequestParam Long userId, @RequestParam Long taskId) {
-        return ResponseEntity.ok(ResApiDto.ok( checkListService.insert(userId,taskId)));
+    public ResponseEntity<ResApiDto<Object, Object>> insertTest(@AuthenticationPrincipal UserDetailsImpl userDetails,  @RequestParam Long taskId) {
+        return ResponseEntity.ok(ResApiDto.ok( checkListService.insert(userDetails.getUser().getId(),taskId)));
     }
 
     @PostMapping("get-all")
