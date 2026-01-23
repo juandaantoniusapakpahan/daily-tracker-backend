@@ -2,9 +2,11 @@ package com.ragdev.tracker.controller;
 
 import com.ragdev.tracker.dto.ReqTodoTaskDto;
 import com.ragdev.tracker.dto.ResApiDto;
+import com.ragdev.tracker.security.UserDetailsImpl;
 import com.ragdev.tracker.service.TodoTaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,8 +20,8 @@ public class TodoTaskController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<ResApiDto<Object, Object>> registerTodoTask(@RequestParam Long userId, @Valid @RequestBody ReqTodoTaskDto dto) {
-        return ResponseEntity.ok(ResApiDto.created(todoTaskService.createTodoTask(userId,dto)));
+    public ResponseEntity<ResApiDto<Object, Object>> registerTodoTask(@AuthenticationPrincipal UserDetailsImpl userDetails, @Valid @RequestBody ReqTodoTaskDto dto) {
+        return ResponseEntity.ok(ResApiDto.created(todoTaskService.createTodoTask(userDetails.getUser().getId(),dto)));
     }
 
     @PostMapping("get-all")
@@ -50,15 +52,15 @@ public class TodoTaskController {
     }
 
     @PostMapping("get-checklist-byMonth")
-    public ResponseEntity<ResApiDto<Object,Object>> getTodoTaskAndCheckList(@RequestParam Long userId,
+    public ResponseEntity<ResApiDto<Object,Object>> getTodoTaskAndCheckList(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                             @RequestParam int month,
                                                                             @RequestParam(defaultValue = "false") boolean history) {
-        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getTodoTaskAndCheckListByMonth(userId,month, history)));
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getTodoTaskAndCheckListByMonth(userDetails.getUser().getId(),month, history)));
     }
 
     @PostMapping("get-prt-byMonth")
-    public ResponseEntity<ResApiDto<Object, Object>> getMonthlyTaskPrt(@RequestParam Long userId,
+    public ResponseEntity<ResApiDto<Object, Object>> getMonthlyTaskPrt(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                                        @RequestParam int month) {
-        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getMonthlyTaskPrt(userId, month)));
+        return ResponseEntity.ok(ResApiDto.ok(todoTaskService.getMonthlyTaskPrt(userDetails.getUser().getId(), month)));
     }
 }
