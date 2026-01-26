@@ -1,12 +1,10 @@
 package com.ragdev.tracker.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Setter
 @Getter
 public class ReqFTransactionDto {
     private Long id;

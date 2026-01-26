@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Setter
-@Getter
 public class ResUserDto {
     private Long id;
     private String email;
