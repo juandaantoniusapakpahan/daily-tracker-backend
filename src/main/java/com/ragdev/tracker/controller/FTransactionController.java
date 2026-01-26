@@ -1,9 +1,12 @@
 package com.ragdev.tracker.controller;
 
 import com.ragdev.tracker.dto.ReqFTransactionDto;
+import com.ragdev.tracker.dto.ReqGetAllFTransDto;
+import com.ragdev.tracker.dto.ReqGetTotalDto;
 import com.ragdev.tracker.dto.ResApiDto;
 import com.ragdev.tracker.security.UserDetailsImpl;
 import com.ragdev.tracker.service.FinanceTransactionService;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,4 +36,35 @@ public class FTransactionController {
     }
 
 
+    @PostMapping("/type")
+    public ResponseEntity<ResApiDto<Object, Object>> getType() {
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.getType()));
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<ResApiDto<Object,Object>> delete(@PathVariable(name = "id") Long id) {
+        fTransService.deleteById(id);
+        return ResponseEntity.ok(ResApiDto.ok(null));
+    }
+
+    @PostMapping("/getAll")
+    public ResponseEntity<ResApiDto<Object,Object>> getAll(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.getAll(user.getUser().getId())));
+    }
+
+    @PostMapping("/getCurrentMonth")
+    public ResponseEntity<ResApiDto<Object, Object>> getCurrMonth(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.getFTransCurrMonth(user.getUser().getId())));
+    }
+
+    @PostMapping("/getTotal")
+    public ResponseEntity<ResApiDto<Object, Object>> getTotal(@AuthenticationPrincipal UserDetailsImpl user, @RequestBody ReqGetTotalDto dto) {
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.getTotal(user.getUser().getId(), dto.getStart(), dto.getEnd())));
+    }
+
+    @PostMapping("/getAllType")
+    public ResponseEntity<ResApiDto<Object,Object>> getAllWithType(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                   @RequestBody ReqGetAllFTransDto dto){
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.getAllByTransactionWithType(user.getUser().getId(), dto)));
+    }
 }

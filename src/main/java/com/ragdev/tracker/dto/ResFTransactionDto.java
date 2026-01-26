@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Setter
-@Getter
 public class ResFTransactionDto {
     private Long id;
     private Long userId;

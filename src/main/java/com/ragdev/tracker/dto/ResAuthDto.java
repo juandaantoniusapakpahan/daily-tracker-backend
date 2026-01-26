@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Setter @Getter
+@Setter
 public class ResAuthDto {
     public String accessToken;
 }

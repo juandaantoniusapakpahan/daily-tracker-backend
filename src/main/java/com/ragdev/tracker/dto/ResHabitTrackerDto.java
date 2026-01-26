@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Setter
-@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResHabitTrackerDto {
     private String month;
