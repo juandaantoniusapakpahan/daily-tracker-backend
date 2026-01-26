@@ -10,6 +10,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Setter
+@Getter
 public class ResTodoTaskDto {
     private Long id;
     private String name;

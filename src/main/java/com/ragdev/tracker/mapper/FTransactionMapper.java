@@ -19,6 +19,7 @@ public class FTransactionMapper {
         newFTrans.setId(fTrans.getId());
         newFTrans.setDescription(fTrans.getDescription());
         newFTrans.setTransactionDate(fTrans.getTransactionDate());
+        newFTrans.setAmount(fTrans.getAmount());
         newFTrans.setCreatedAt(fTrans.getCreatedAt());
         newFTrans.setUpdatedAt(fTrans.getUpdatedAt());
         newFTrans.setUserId(fTrans.getUser().getId());

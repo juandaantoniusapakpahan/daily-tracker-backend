@@ -4,6 +4,7 @@ import com.ragdev.tracker.dto.ReqFTransactionDto;
 import com.ragdev.tracker.dto.ReqGetAllFTransDto;
 import com.ragdev.tracker.dto.ResFTransactionDto;
 import com.ragdev.tracker.dto.ResGetAllFTransDto;
+import com.ragdev.tracker.dto.interf.ResMonthlyTotalDto;
 import com.ragdev.tracker.dto.interf.ResTotalFTransDto;
 import com.ragdev.tracker.entity.FinanceCategory;
 import com.ragdev.tracker.entity.FinanceTransaction;
@@ -111,6 +112,12 @@ public class FinanceTransactionService {
         getAllDto.setFinanceTransactions(fTrans.stream().map(FTransactionMapper::toDto).toList());
         getAllDto.setTotal(getTotal(userId, dto.getStart(), dto.getEnd()));
         return getAllDto;
+    }
+
+    public Map<String, List<ResMonthlyTotalDto>> findMonthlyIncomeExpense(Long userId, int year) {
+        Map<String, List<ResMonthlyTotalDto>> dto = new HashMap<>();
+        dto.put("transactionMonthly", fTransRepo.findMonthlyIncomeExpense(userId, year));
+        return dto;
     }
 
 

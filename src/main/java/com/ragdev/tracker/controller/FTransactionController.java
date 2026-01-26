@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -66,5 +67,11 @@ public class FTransactionController {
     public ResponseEntity<ResApiDto<Object,Object>> getAllWithType(@AuthenticationPrincipal UserDetailsImpl user,
                                                                    @RequestBody ReqGetAllFTransDto dto){
         return ResponseEntity.ok(ResApiDto.ok(fTransService.getAllByTransactionWithType(user.getUser().getId(), dto)));
+    }
+
+    @PostMapping("/getMonthlyIncomeExpense")
+    public ResponseEntity<ResApiDto<Object, Object>> findMonthlyIncomeExpense(@AuthenticationPrincipal UserDetailsImpl user,
+                                                                              @RequestParam("year") int year){
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.findMonthlyIncomeExpense(user.getUser().getId(), year)));
     }
 }
