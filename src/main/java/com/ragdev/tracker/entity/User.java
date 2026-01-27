@@ -33,6 +33,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(name = "external_id")
+    private String externalId;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;

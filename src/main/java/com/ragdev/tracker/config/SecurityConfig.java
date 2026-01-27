@@ -3,6 +3,7 @@ package com.ragdev.tracker.config;
 
 import com.ragdev.tracker.security.JwtAuthenticationEntryPoint;
 import com.ragdev.tracker.security.JwtAuthenticationFilter;
+import com.ragdev.tracker.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationEntryPoint jwtEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     @Value("${external.daily-tracker-ui.url}")
     private String uiUrl;
 
@@ -43,7 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/register").permitAll()
                         .anyRequest().authenticated()
-                )
+                ).oauth2Login(oauth-> oauth.userInfoEndpoint(info-> info.userService(customOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
