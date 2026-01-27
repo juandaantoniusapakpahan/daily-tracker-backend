@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.todoTasks WHERE u.isActive = true")
     List<User> findAllActiveWithTasks();
+
+    Optional<User> findByExternalId(String externalId);
 }
