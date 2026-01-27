@@ -7,6 +7,7 @@ import com.ragdev.tracker.dto.ResApiDto;
 import com.ragdev.tracker.security.UserDetailsImpl;
 import com.ragdev.tracker.service.FinanceTransactionService;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.awt.print.Pageable;
 
 @RestController
 @RequestMapping("/api/finance-transaction")
@@ -65,8 +68,10 @@ public class FTransactionController {
 
     @PostMapping("/getAllType")
     public ResponseEntity<ResApiDto<Object,Object>> getAllWithType(@AuthenticationPrincipal UserDetailsImpl user,
-                                                                   @RequestBody ReqGetAllFTransDto dto){
-        return ResponseEntity.ok(ResApiDto.ok(fTransService.getAllByTransactionWithType(user.getUser().getId(), dto)));
+                                                                   @RequestBody ReqGetAllFTransDto dto,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "15")  int size){
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.getAllByTransactionWithType(user.getUser().getId(), dto, page, size)));
     }
 
     @PostMapping("/getMonthlyIncomeExpense")
