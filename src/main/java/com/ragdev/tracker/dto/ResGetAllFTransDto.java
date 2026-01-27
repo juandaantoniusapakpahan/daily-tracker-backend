@@ -15,4 +15,6 @@ import java.util.List;
 public class ResGetAllFTransDto {
     private List <ResFTransactionDto> financeTransactions = new ArrayList<>();
     private ResTotalFTransDto total;
+    private Integer totalData;
+    private Integer totalPage;
 }
