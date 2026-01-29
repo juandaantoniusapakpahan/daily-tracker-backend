@@ -35,8 +35,8 @@ public class FTransactionController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<ResApiDto<Object, Object>> update(@PathVariable(name = "id") Long id, @RequestBody ReqFTransactionDto dto) {
-        return ResponseEntity.ok(ResApiDto.ok(fTransService.update(id, dto)));
+    public ResponseEntity<ResApiDto<Object, Object>> update(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable(name = "id") Long id, @RequestBody ReqFTransactionDto dto) {
+        return ResponseEntity.ok(ResApiDto.ok(fTransService.update(user.getUser().getId(), id, dto)));
     }
 
 
@@ -46,8 +46,8 @@ public class FTransactionController {
     }
 
     @PostMapping("/delete/{id}")
-    public ResponseEntity<ResApiDto<Object,Object>> delete(@PathVariable(name = "id") Long id) {
-        fTransService.deleteById(id);
+    public ResponseEntity<ResApiDto<Object,Object>> delete(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable(name = "id") Long id) {
+        fTransService.deleteById(user.getUser().getId(),id);
         return ResponseEntity.ok(ResApiDto.ok(null));
     }
 
