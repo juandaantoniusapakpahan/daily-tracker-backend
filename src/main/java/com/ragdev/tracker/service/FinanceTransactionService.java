@@ -119,13 +119,12 @@ public class FinanceTransactionService {
         if ((dto.isExpense() && dto.isIncome()) || (!dto.isExpense() && !dto.isIncome())) {
             fTrans = getFinsTrans(userId, dto.getStart(), dto.getEnd(),pageable);
             totalData = getTotalDataTrans( userId, dto.getStart(), dto.getEnd(), "");
-        } else if (!dto.isExpense()) {
-            fTrans = getByUserIdAndTransactionDateAndType(userId, dto.getStart(), dto.getEnd(), "INCOME",pageable);
-            totalData = getTotalDataTrans(userId, dto.getStart(), dto.getEnd(), "INCOME");
         } else {
-            fTrans = getByUserIdAndTransactionDateAndType(userId, dto.getStart(), dto.getEnd(), "EXPENSE",pageable);
-            totalData = getTotalDataTrans(userId, dto.getStart(), dto.getEnd(), "EXPENSE");
+            String type =  dto.isExpense() ? "EXPENSE" : "INCOME";
+            fTrans = getByUserIdAndTransactionDateAndType(userId, dto.getStart(), dto.getEnd(), type,pageable);
+            totalData = getTotalDataTrans(userId, dto.getStart(), dto.getEnd(), type);
         }
+
         ResGetAllFTransDto getAllDto = new ResGetAllFTransDto();
         getAllDto.setFinanceTransactions(fTrans.stream().map(FTransactionMapper::toDto).toList());
         getAllDto.setTotal(getTotal(userId, dto.getStart(), dto.getEnd()));
