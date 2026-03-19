@@ -44,6 +44,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/ws/chat/**").permitAll()
                         .requestMatchers("/api/user/register").permitAll()
                         .anyRequest().authenticated()
                 ).oauth2Login(oauth-> oauth.userInfoEndpoint(info-> info.userService(customOAuth2UserService))

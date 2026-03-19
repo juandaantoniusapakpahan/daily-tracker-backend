@@ -1,5 +1,6 @@
 package com.ragdev.tracker.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ragdev.tracker.dto.ReqFCategoryDto;
 import com.ragdev.tracker.dto.ResApiDto;
 import com.ragdev.tracker.security.UserDetailsImpl;
@@ -30,22 +31,22 @@ public class FCategoryController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ResApiDto<Object, Object>> update(@RequestBody ReqFCategoryDto dto) {
-        return ResponseEntity.ok(ResApiDto.ok(fCategoryService.update(dto)));
+    public ResponseEntity<ResApiDto<Object, Object>> update(@AuthenticationPrincipal UserDetailsImpl user, @RequestBody ReqFCategoryDto dto) {
+        return ResponseEntity.ok(ResApiDto.ok(fCategoryService.update(user.getUser().getId(),dto)));
     }
 
     @PostMapping("/inActive/{id}")
-    public ResponseEntity<ResApiDto<Object, Object>> inActive(@PathVariable(name = "id") Long id) {
-        return  ResponseEntity.ok(ResApiDto.ok(fCategoryService.inActive(id)));
+    public ResponseEntity<ResApiDto<Object, Object>> inActive(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable(name = "id") Long id) {
+        return  ResponseEntity.ok(ResApiDto.ok(fCategoryService.inActive(user.getUser().getId(),id)));
     }
 
     @PostMapping("/active/{id}")
-    public ResponseEntity<ResApiDto<Object, Object>> active(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(ResApiDto.ok(fCategoryService.active(id)));
+    public ResponseEntity<ResApiDto<Object, Object>> active(@AuthenticationPrincipal UserDetailsImpl user, @PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(ResApiDto.ok(fCategoryService.active(user.getUser().getId(),id)));
     }
 
     @PostMapping("/getAll")
-    public ResponseEntity<ResApiDto<Object, Object>> getAll(@AuthenticationPrincipal UserDetailsImpl user) {
+    public ResponseEntity<ResApiDto<Object, Object>> getAll(@AuthenticationPrincipal UserDetailsImpl user) throws JsonProcessingException {
         return ResponseEntity.ok(ResApiDto.ok(fCategoryService.getAll(user.getUser().getId())));
     }
 }

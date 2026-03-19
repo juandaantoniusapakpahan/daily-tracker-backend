@@ -17,8 +17,8 @@ import com.ragdev.tracker.repository.FinanceTransactionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.support.RestGatewaySupport;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -30,7 +30,8 @@ public class FinanceTransactionService {
     private final FinanceCategoryRepository fCateRepo;
 
     public FinanceTransactionService(FinanceTransactionRepository fTransRepo,
-                                     FinanceCategoryRepository fCateRepo) {
+                                     FinanceCategoryRepository fCateRepo
+                                 ) {
         this.fTransRepo = fTransRepo;
         this.fCateRepo = fCateRepo;
     }
@@ -46,7 +47,7 @@ public class FinanceTransactionService {
     }
 
     @Transactional
-    public ResFTransactionDto update(Long id, ReqFTransactionDto dto) {
+    public ResFTransactionDto update(Long userId,Long id, ReqFTransactionDto dto) {
         FinanceCategory fCate = getFCateById(dto.getCategoryId());
         FinanceTransaction fTrans = FTransactionMapper.entityToEntity(getById(id),dto);
         fTrans.setCategory(fCate);
@@ -90,7 +91,7 @@ public class FinanceTransactionService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(Long userId,Long id) {
         fTransRepo.deleteById(id);
     }
 
@@ -99,15 +100,15 @@ public class FinanceTransactionService {
     }
 
     public ResGetAllFTransDto getFTransCurrMonth(Long userId) {
+        ResGetAllFTransDto redisData = new ResGetAllFTransDto();
         LocalDate start = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now();
         List<ResFTransactionDto> fTransDto = findFinsTrans(userId, start, end).stream()
                 .map(FTransactionMapper::toDto).toList();
 
-        ResGetAllFTransDto allDto =  new ResGetAllFTransDto();
-        allDto.setFinanceTransactions(fTransDto);
-        allDto.setTotal(getTotal(userId, start, end));
-        return allDto;
+        redisData.setFinanceTransactions(fTransDto);
+        redisData.setTotal(getTotal(userId, start, end));
+        return redisData;
 
     }
     public ResGetAllFTransDto getAllByTransactionWithType(Long userId, ReqGetAllFTransDto dto,
@@ -118,13 +119,12 @@ public class FinanceTransactionService {
         if ((dto.isExpense() && dto.isIncome()) || (!dto.isExpense() && !dto.isIncome())) {
             fTrans = getFinsTrans(userId, dto.getStart(), dto.getEnd(),pageable);
             totalData = getTotalDataTrans( userId, dto.getStart(), dto.getEnd(), "");
-        } else if (!dto.isExpense()) {
-            fTrans = getByUserIdAndTransactionDateAndType(userId, dto.getStart(), dto.getEnd(), "INCOME",pageable);
-            totalData = getTotalDataTrans(userId, dto.getStart(), dto.getEnd(), "INCOME");
         } else {
-            fTrans = getByUserIdAndTransactionDateAndType(userId, dto.getStart(), dto.getEnd(), "EXPENSE",pageable);
-            totalData = getTotalDataTrans(userId, dto.getStart(), dto.getEnd(), "EXPENSE");
+            String type =  dto.isExpense() ? "EXPENSE" : "INCOME";
+            fTrans = getByUserIdAndTransactionDateAndType(userId, dto.getStart(), dto.getEnd(), type,pageable);
+            totalData = getTotalDataTrans(userId, dto.getStart(), dto.getEnd(), type);
         }
+
         ResGetAllFTransDto getAllDto = new ResGetAllFTransDto();
         getAllDto.setFinanceTransactions(fTrans.stream().map(FTransactionMapper::toDto).toList());
         getAllDto.setTotal(getTotal(userId, dto.getStart(), dto.getEnd()));
